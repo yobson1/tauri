@@ -82,7 +82,6 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<PathBuf>> {
 
   fs::create_dir_all(data_dir.join("usr/bin/"))?;
   fs::create_dir_all(data_dir.join("usr/lib/"))?;
-  fs::create_dir_all(data_dir.join("usr/lib/locales"))?;
 
   let cef_path = settings
     .bundle_settings()
@@ -112,11 +111,31 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<PathBuf>> {
     // TODO: seccomp
   ];
 
+  fs::create_dir_all(&output_path)?;
+  let app_dir_path = output_path.join(format!("{}.AppDir", settings.product_name()));
+  let appimage_filename = format!(
+    "{}_{}_{appimage_arch}.AppImage",
+    settings.product_name(),
+    settings.version_string()
+  );
+  let appimage_path = output_path.join(&appimage_filename);
+
+  let app_dir_cef_dir = app_dir_path.join("lib/tauri-cef");
+  let app_dir_cef_locales_dir = app_dir_cef_dir.join("locales");
+  fs::create_dir_all(&app_dir_cef_locales_dir)?;
+
+  let app_dir_hook_dir = app_dir_path.join("bin");
+  fs::create_dir_all(&app_dir_hook_dir)?;
+  write_and_make_executable(
+    &app_dir_hook_dir.join("00-tauri-cef.hook"),
+    b"#!/bin/sh\nexport LD_LIBRARY_PATH=\"${APPDIR}/lib/tauri-cef${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}\"\n".to_vec(),
+  )?;
+
   for f in cef_files {
     let dest = if f == "chrome-sandbox" {
       data_dir.join("usr/bin/").join(f)
     } else {
-      data_dir.join("usr/lib/").join(f)
+      app_dir_cef_dir.join(f)
     };
     fs::copy(cef_path.join(f), &dest)?;
     let _ = Command::new("strip").arg(&dest).output_ok();
@@ -129,20 +148,9 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<PathBuf>> {
   ];
 
   for f in locales {
-    fs::copy(
-      cef_path.join("locales").join(f),
-      data_dir.join("usr/lib/locales").join(f),
-    )?;
+    let source = cef_path.join("locales").join(f);
+    fs::copy(source, app_dir_cef_locales_dir.join(f))?;
   }
-
-  fs::create_dir_all(&output_path)?;
-  let app_dir_path = output_path.join(format!("{}.AppDir", settings.product_name()));
-  let appimage_filename = format!(
-    "{}_{}_{appimage_arch}.AppImage",
-    settings.product_name(),
-    settings.version_string()
-  );
-  let appimage_path = output_path.join(&appimage_filename);
 
   fs::create_dir_all(&tools_path)?;
   let larger_icon = icons
@@ -167,9 +175,10 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<PathBuf>> {
     .map(|b| format!(" \"{}\"", b.to_string_lossy()))
     .collect::<String>();
 
-  // quick-sharun checks the main binary with ldd so even though we manually add the cef files,
-  // we'll add them to LD_LIBRARY_PATH to pass the pre-bundle checks
-  let mut ld_lib_path = data_dir.join("usr/lib/").to_string_lossy().to_string();
+  // quick-sharun checks the main binary with ldd so even though we manually add
+  // the CEF files, we'll add them to LD_LIBRARY_PATH to pass the pre-bundle
+  // checks. This also matches the runtime AppRun hook above.
+  let mut ld_lib_path = app_dir_cef_dir.to_string_lossy().to_string();
   if let Ok(ld_env) = std::env::var("LD_LIBRARY_PATH") {
     ld_lib_path = format!("{}:{}", ld_lib_path, ld_env);
   }
@@ -192,13 +201,14 @@ pub fn bundle_project(settings: &Settings) -> crate::Result<Vec<PathBuf>> {
     .args([
       "-c",
       &format!(
-        r#""{}" "{}" {bins} "{}" "{}""#,
+        r#""{}" "{}" {bins} "{}" "{}" "{}""#,
         quick_sharun.to_string_lossy(),
         data_dir
           .join(format!("usr/bin/{}", main_binary.name()))
           .to_string_lossy(),
         // TODO: This may have to be in lib instead
         data_dir.join("usr/bin/chrome-sandbox").to_string_lossy(),
+        app_dir_cef_dir.to_string_lossy(),
         data_dir.join("usr/lib/").to_string_lossy()
       ),
     ])
