@@ -1,5 +1,25 @@
 # Changelog
 
+## \[2.10.0]
+
+### New Features
+
+- [`f6c1eb253`](https://www.github.com/tauri-apps/tauri/commit/f6c1eb2533a0445e081c334931d67fee3e354c6f) ([#15401](https://www.github.com/tauri-apps/tauri/pull/15401) by [@Legend-Master](https://www.github.com/tauri-apps/tauri/../../Legend-Master)) Added `bundle.windows.bundleVCRuntime` to copy the Visual C++ runtime DLLs into Windows MSI and NSIS installers. The bundler locates the runtime through `VCTOOLS_REDIST_DIR` or the bundled `vswhere.exe`.
+
+### Bug Fixes
+
+- [`adf5acf6f`](https://www.github.com/tauri-apps/tauri/commit/adf5acf6fbc0ef26de6b1eb30c47bb701c256954) ([#15651](https://www.github.com/tauri-apps/tauri/pull/15651) by [@justjavac](https://www.github.com/tauri-apps/tauri/../../justjavac)) Fix MSI bundling when an external binary filename starts with a digit.
+
+### What's Changed
+
+- [`1cffb01da`](https://www.github.com/tauri-apps/tauri/commit/1cffb01da55f5fcd5a0f74ef3281b5a715513e4d) ([#13221](https://www.github.com/tauri-apps/tauri/pull/13221) by [@lucasfernog](https://www.github.com/tauri-apps/tauri/../../lucasfernog)) Set MSRV to 1.90.
+
+### Dependencies
+
+- Upgraded to `tauri-utils@2.10.0`
+- Upgraded to `tauri-macos-sign@2.4.0`
+- [`7632efd09`](https://www.github.com/tauri-apps/tauri/commit/7632efd09ffb9eddafefd8d04e311565394efce9) ([#15641](https://www.github.com/tauri-apps/tauri/pull/15641) by [@FabianLars](https://www.github.com/tauri-apps/tauri/../../FabianLars)) **Breaking Change:** Updated various dependencies and removed `goblin`. Some of these dependencies are part of the public API which makes this a breaking change. Added a warning about `tauri-bundler`'s API stability in reflection to past regular breaking struct changes.
+
 ## \[2.9.4]
 
 ### Bug Fixes

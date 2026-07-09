@@ -1,5 +1,40 @@
 # Changelog
 
+## \[2.12.0]
+
+### New Features
+
+- [`29265557c`](https://www.github.com/tauri-apps/tauri/commit/29265557c7a42ef6a1f982e0ef738208df1f6dd3) ([#15410](https://www.github.com/tauri-apps/tauri/pull/15410) by [@zetaloop](https://www.github.com/tauri-apps/tauri/../../zetaloop)) Added `app > windows > noRedirectionBitmap` config option to disable the window redirection bitmap on Windows.
+- [`29265557c`](https://www.github.com/tauri-apps/tauri/commit/29265557c7a42ef6a1f982e0ef738208df1f6dd3) ([#15410](https://www.github.com/tauri-apps/tauri/pull/15410) by [@zetaloop](https://www.github.com/tauri-apps/tauri/../../zetaloop)) Added `WindowBuilder/WebviewWindowBuilder::no_redirection_bitmap` method to disable the window redirection bitmap on Windows.
+
+### Enhancements
+
+- [`d3108ff9a`](https://www.github.com/tauri-apps/tauri/commit/d3108ff9a2b6c694f4cbe579d9a9c1d67917117f) ([#15578](https://www.github.com/tauri-apps/tauri/pull/15578) by [@sftse](https://www.github.com/tauri-apps/tauri/../../sftse)) `State` had `Send` and `Sync` trait bounds that were already implied, remove them from the struct definition.
+
+### Bug Fixes
+
+- [`4a0e1df18`](https://www.github.com/tauri-apps/tauri/commit/4a0e1df1829dab29cedc1164ff5e7fd1ce42e215) ([#15604](https://www.github.com/tauri-apps/tauri/pull/15604) by [@tenderdeve](https://www.github.com/tauri-apps/tauri/../../tenderdeve)) Remove a webview's JS event listeners from the backend `Listeners` map when that webview is destroyed. Previously the entries keyed by the source webview label lingered after the webview was dropped, so they could never be delivered and leaked until the app exited — forcing apps to manually `unlisten()` before closing a window.
+- [`e517fa18e`](https://www.github.com/tauri-apps/tauri/commit/e517fa18ee45a451a60b681552547899d3e6a4b2) ([#15450](https://www.github.com/tauri-apps/tauri/pull/15450) by [@Legend-Master](https://www.github.com/tauri-apps/tauri/../../Legend-Master)) Fix `run_main_thread!` macro used by things like `MenuItem` and some other APIs deadlock when called on main thread with `MockRuntime`
+
+### What's Changed
+
+- [`1cffb01da`](https://www.github.com/tauri-apps/tauri/commit/1cffb01da55f5fcd5a0f74ef3281b5a715513e4d) ([#13221](https://www.github.com/tauri-apps/tauri/pull/13221) by [@lucasfernog](https://www.github.com/tauri-apps/tauri/../../lucasfernog)) Set MSRV to 1.90.
+
+### Dependencies
+
+- Upgraded to `tauri-utils@2.10.0`
+- Upgraded to `tauri-build@2.7.0`
+- Upgraded to `tauri-runtime-wry@2.12.0`
+- Upgraded to `tauri-runtime@2.12.0`
+- Upgraded to `tauri-macros@2.7.0`
+- [`2bb4fdbd0`](https://www.github.com/tauri-apps/tauri/commit/2bb4fdbd0252ca414e28bdc9f0284ac4ff108f26) ([#15592](https://www.github.com/tauri-apps/tauri/pull/15592) by [@renovate](https://www.github.com/tauri-apps/tauri/../../renovate)) Updated `cargo_toml` crate to `1`
+
+### Breaking Changes
+
+- [`26cb3d665`](https://www.github.com/tauri-apps/tauri/commit/26cb3d665b881b44fa5cf95514776aee5c85c374) ([#15563](https://www.github.com/tauri-apps/tauri/pull/15563) by [@onehumandev](https://www.github.com/tauri-apps/tauri/../../onehumandev)) On Android, `$VIDEO` and `video_dir()` now resolve to the app-specific Movies directory instead of external cache storage.
+
+  **Migration:** Files previously written to the old location (`.../cache`) will not be discovered at the new location (`.../files/Movies`). Migrate existing files or update path assumptions accordingly.
+
 ## \[2.11.5]
 
 ### Dependencies

@@ -1,5 +1,20 @@
 # Changelog
 
+## \[2.12.0]
+
+### New Features
+
+- [`f6c1eb253`](https://www.github.com/tauri-apps/tauri/commit/f6c1eb2533a0445e081c334931d67fee3e354c6f) ([#15401](https://www.github.com/tauri-apps/tauri/pull/15401) by [@Legend-Master](https://www.github.com/tauri-apps/tauri/../../Legend-Master)) Added `bundle.windows.bundleVCRuntime` to copy the Visual C++ runtime DLLs into Windows MSI and NSIS installers. The bundler locates the runtime through `VCTOOLS_REDIST_DIR` or the bundled `vswhere.exe`.
+- [`f6c1eb253`](https://www.github.com/tauri-apps/tauri/commit/f6c1eb2533a0445e081c334931d67fee3e354c6f) ([#15401](https://www.github.com/tauri-apps/tauri/pull/15401) by [@Legend-Master](https://www.github.com/tauri-apps/tauri/../../Legend-Master)) Added `build.windows.staticVCRuntime` to control MSVC static runtime linking. The `STATIC_VCRUNTIME` environment variable is now deprecated and emits a migration warning when used.
+
+### Bug Fixes
+
+- [`adf5acf6f`](https://www.github.com/tauri-apps/tauri/commit/adf5acf6fbc0ef26de6b1eb30c47bb701c256954) ([#15651](https://www.github.com/tauri-apps/tauri/pull/15651) by [@justjavac](https://www.github.com/tauri-apps/tauri/../../justjavac)) Fix MSI bundling when an external binary filename starts with a digit.
+
+### Dependencies
+
+- Upgraded to `tauri-cli@2.12.0`
+
 ## \[2.11.4]
 
 ### Bug Fixes
